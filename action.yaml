@@ -1,21 +1,55 @@
-name: 'Hello World' # taken from https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
-description: 'Greet someone'
+name: 'Build and Push Chart to OCI Regsitry'
+description: 'Builds and pushes a Helm chart to an OCI registry'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  chart-path: ""
+    description: "Path to chart"
     required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+  update-dependencies: ""
+    description: Sets whether or not to update dependencies before packaging
+    default: true
+  registry-url: ""
+    description: "URL of registry, excluding the protocol"
+    required: true
+  repository: ""
+    description: "Repository in registry to push to"
+    default: charts
+  username: ""
+    description: "Username to login to registry"
+  password: ""
+    description: "Password to login to registry"
 runs:
   using: "composite"
+  runs-on: ubuntu-latest
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
-      shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
-      shell: bash
-    - run: ${{ github.action_path }}/goodbye.sh
-      shell: bash
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ inputs.token }}
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.9.0
+    - if: inputs.update-dependencies
+      name: Update Chart Dependencies
+      run: |
+        helm dependency update ${{ inputs.chart-path }}
+    - name: Package Chart
+      run: |
+        helm package ${{ inputs.chart-path }}
+    - name: Helm Registry Login
+      run: |
+        helm registry login \
+        --username ${{ inputs.username }} \
+        --password ${{ inputs.password }} \
+        ${{ inputs.registry-url }}
+    - name: Push Chart
+      run: |
+        for file in *.tgz; do
+          [ -f "$file" ] || continue
+          helm push $file ${{ inputs.registry-url }}/${{ inputs.repository }}
+        done
+    - name: Delete Chart Tarballs
+      run: |
+        for file in *.tgz; do
+          [ -f "$file" ] || continue
+          rm $file
+        done
