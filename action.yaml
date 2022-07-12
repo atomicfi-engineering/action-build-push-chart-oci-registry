@@ -1,5 +1,5 @@
-name: 'Build and Push Chart to OCI Regsitry'
-description: 'Builds and pushes a Helm chart to an OCI registry'
+name: Build and Push Chart to OCI Regsitry
+description: Builds and pushes a Helm chart to an OCI registry
 inputs:
   chart-path: ""
     description: "Path to chart"
@@ -8,15 +8,18 @@ inputs:
     description: Sets whether or not to update dependencies before packaging
     default: true
   registry-url: ""
-    description: "URL of registry, excluding the protocol"
+    description: URL of registry, excluding the protocol
     required: true
   repository: ""
-    description: "Repository in registry to push to"
+    description: Repository in registry to push to
     default: charts
   username: ""
-    description: "Username to login to registry"
+    description: Username to login to registry
   password: ""
-    description: "Password to login to registry"
+    description: Password to login to registry
+  delete-tgzs: ""
+    description: Enables step to delete all `*.tgz` files
+    default: true
 runs:
   using: "composite"
   runs-on: ubuntu-latest
@@ -44,4 +47,10 @@ runs:
         for file in *.tgz; do
           [ -f "$file" ] || continue
           helm push $file ${{ inputs.registry-url }}/${{ inputs.repository }}
+        done
+    - name: Delete Chart Tarballs
+      run: |
+        for file in *.tgz; do
+          [ -f "$file" ] || continue
+          rm $file
         done
