@@ -49,6 +49,7 @@ runs:
           helm push $file ${{ inputs.registry-url }}/${{ inputs.repository }}
         done
     - name: Delete Chart Tarballs
+      if: inputs.delete-tgzs == true
       run: |
         for file in *.tgz; do
           [ -f "$file" ] || continue
