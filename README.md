@@ -23,6 +23,9 @@ Builds and pushes a Helm chart to an OCI registry
     # Password to login to registry
     # Default:
     password: ""
+    # Enables step to delete all `*.tgz` files
+    # Default: true
+    delete-tgzs: ""
 ```
 
 | **Input**                 | **Description**                                             | **Default** | **Required** |
@@ -33,6 +36,7 @@ Builds and pushes a Helm chart to an OCI registry
 | **`repository`**          | Repository in registry to push to                           | `charts`    |   **false**  |
 | **`username`**            | Username to login to registry                               |             |   **false**  |
 | **`password`**            | Password to login to registry                               |             |   **false**  |
+| **`delete-tgzs`**         | Enables step to delete all `*.tgz` files                    | `true`      |   **false**  |
 
 ### Example usage
 
