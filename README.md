@@ -1,16 +1,6 @@
-<!-- start title -->
-
 # GitHub Action:Build and Push Chart to OCI Registry
 
-<!-- end title -->
-<!-- start description -->
-
 Builds and pushes a Helm chart to an OCI registry
-
-<!-- end description -->
-<!-- start contents -->
-<!-- end contents -->
-<!-- start usage -->
 
 ```yaml
 - uses: atomicfi/action-build-push-chart-oci-registry@undefined
@@ -35,9 +25,6 @@ Builds and pushes a Helm chart to an OCI registry
     password: ""
 ```
 
-<!-- end usage -->
-<!-- start inputs -->
-
 | **Input**                 | **Description**                                             | **Default** | **Required** |
 | :------------------------ | :---------------------------------------------------------- | :---------: | :----------: |
 | **`chart-path`**          | Path to chart                                               |             |   **true**   |
@@ -46,11 +33,6 @@ Builds and pushes a Helm chart to an OCI registry
 | **`repository`**          | Repository in registry to push to                           | `charts`    |   **false**  |
 | **`username`**            | Username to login to registry                               |             |   **false**  |
 | **`password`**            | Password to login to registry                               |             |   **false**  |
-
-<!-- end inputs -->
-<!-- start outputs -->
-<!-- end outputs -->
-<!-- start examples -->
 
 ### Example usage
 
@@ -73,5 +55,3 @@ jobs:
           username: admin
           password: hunter2
 ```
-
-<!-- end examples -->
