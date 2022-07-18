@@ -22,7 +22,6 @@ inputs:
     default: true
 runs:
   using: "composite"
-  runs-on: ubuntu-latest
   steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -32,18 +31,21 @@ runs:
         version: v3.9.0
     - if: inputs.update-dependencies
       name: Update Chart Dependencies
+      shell: bash
       run: |
         helm dependency update ${{ inputs.chart-path }}
     - name: Package Chart
       run: |
         helm package ${{ inputs.chart-path }}
     - name: Helm Registry Login
+      shell: bash
       run: |
         helm registry login \
         --username ${{ inputs.username }} \
         --password ${{ inputs.password }} \
         ${{ inputs.registry-url }}
     - name: Push Chart
+      shell: bash
       run: |
         for file in *.tgz; do
           [ -f "$file" ] || continue
@@ -51,6 +53,7 @@ runs:
         done
     - name: Delete Chart Tarballs
       if: inputs.delete-tgzs == true
+      shell: bash
       run: |
         for file in *.tgz; do
           [ -f "$file" ] || continue
