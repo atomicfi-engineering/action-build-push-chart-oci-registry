@@ -35,6 +35,7 @@ runs:
       run: |
         helm dependency update ${{ inputs.chart-path }}
     - name: Package Chart
+      shell: bash
       run: |
         helm package ${{ inputs.chart-path }}
     - name: Helm Registry Login
