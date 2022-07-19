@@ -1,55 +1,60 @@
-name: Build and Push Chart to OCI Regsitry #
+name: Build and Push Chart to OCI Regsitry
 description: Builds and pushes a Helm chart to an OCI registry
 inputs:
-  chart-path: ""
+  chart-path:
     description: "Path to chart"
     required: true
-  update-dependencies: ""
+  update-dependencies:
     description: Sets whether or not to update dependencies before packaging
     default: true
-  registry-url: ""
+  registry-url:
     description: URL of registry, excluding the protocol
     required: true
-  repository: ""
+  repository:
     description: Repository in registry to push to
     default: charts
-  username: ""
+  username:
     description: Username to login to registry
-  password: ""
+  password:
     description: Password to login to registry
-  delete-tgzs: ""
+  delete-tgzs:
     description: Enables step to delete all `*.tgz` files
     default: true
 runs:
   using: "composite"
-  runs-on: ubuntu-latest
   steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Install Helm
       uses: azure/setup-helm@v1
       with:
         version: v3.9.0
     - if: inputs.update-dependencies
       name: Update Chart Dependencies
+      shell: bash
       run: |
         helm dependency update ${{ inputs.chart-path }}
     - name: Package Chart
+      shell: bash
       run: |
         helm package ${{ inputs.chart-path }}
     - name: Helm Registry Login
+      shell: bash
       run: |
         helm registry login \
         --username ${{ inputs.username }} \
         --password ${{ inputs.password }} \
         ${{ inputs.registry-url }}
     - name: Push Chart
+      shell: bash
       run: |
         for file in *.tgz; do
           [ -f "$file" ] || continue
-          helm push $file ${{ inputs.registry-url }}/${{ inputs.repository }}
+          helm push $file oci://${{ inputs.registry-url }}/${{ inputs.repository }}
         done
     - name: Delete Chart Tarballs
       if: inputs.delete-tgzs == true
+      shell: bash
       run: |
         for file in *.tgz; do
           [ -f "$file" ] || continue
