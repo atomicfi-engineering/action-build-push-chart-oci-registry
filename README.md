@@ -3,7 +3,7 @@
 Builds and pushes a Helm chart to an OCI registry
 
 ```yaml
-- uses: atomicfi/action-build-push-chart-oci-registry@undefined
+- uses: atomicfi-engineering/action-build-push-chart-oci-registry@undefined
   with:
     # Path to chart. Required.
     # Default:
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and push chart to registry
     steps:
-      - uses: atomicfi/action-build-push-chart-oci-registry
+      - uses: atomicfi-engineering/action-build-push-chart-oci-registry
         with:
           chart-path: charts/chart-name
           registry-url: registry.example.com
