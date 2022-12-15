@@ -1,3 +1,4 @@
+# action.yaml
 name: Build and Push Chart to OCI Regsitry #
 description: Builds and pushes a Helm chart to an OCI registry
 inputs:
